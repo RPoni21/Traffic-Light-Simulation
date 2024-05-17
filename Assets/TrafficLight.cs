@@ -10,6 +10,7 @@ public class TrafficLight : MonoBehaviour
     public static TrafficLight Instance { get; private set;}
     float timeToChange = 15;
     List<GameObject> lights = new List<GameObject>();
+    GameObject active;
     float saveTime;
     int track = 0;
     int path1traffic = 0;
@@ -17,8 +18,14 @@ public class TrafficLight : MonoBehaviour
     int path3traffic = 0;
     int path4traffic = 0;
     int totalTraffic = 0;
+    List<int> traffic = new List<int>();
+    int current;
+    int toChange;
     public Text trafficText;
-    public Text pathText;
+    public Text path1Text;
+    public Text path2Text;
+    public Text path3Text;
+    public Text path4Text;
 
     private void Awake() {
         if (Instance != null && Instance != this)
@@ -38,6 +45,14 @@ public class TrafficLight : MonoBehaviour
         lights.Add(transform.GetChild(1).GetChild(3).gameObject);
         lights.Add(transform.GetChild(2).GetChild(3).gameObject);
         lights.Add(transform.GetChild(3).GetChild(3).gameObject);
+
+        traffic.Add(path1traffic);
+        traffic.Add(path2traffic);
+        traffic.Add(path3traffic);
+        traffic.Add(path4traffic);
+
+        current = 0;
+        toChange = 1;
         saveTime = timeToChange;
 
 
@@ -46,7 +61,7 @@ public class TrafficLight : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        CurrentGreenAndFrontRightGreen();
+        basicSystem();
 
     }
 
@@ -60,6 +75,7 @@ public class TrafficLight : MonoBehaviour
             track++;
             if(track > 3) track = 0;
             lights[track].gameObject.layer = 9;
+            active = lights[track];
             }
     }
 
@@ -80,6 +96,7 @@ public class TrafficLight : MonoBehaviour
 
             if(track > 3) track = 0;
             lights[track].gameObject.layer = 9;
+            active = lights[track]; 
 
             frontTrack++;
             if(frontTrack > 3) frontTrack -= 4;
@@ -88,54 +105,96 @@ public class TrafficLight : MonoBehaviour
             }
     }
 
+
+
     public void IncrementTraffic(int mode) {
         switch(mode) {
             case 1:
-                path1traffic++;
+                traffic[0]++;
                 break;
 
             case 2:
-                path2traffic++;
+                traffic[1]++;
                 break;
 
             case 3:
-                path3traffic++;
+                traffic[2]++;
                 break;
 
             case 4:
-                path4traffic++;
+                traffic[3]++;
                 break;
         }
 
         totalTraffic++;
+        UpdatePathText(mode);
         UpdateTrafficText();
     }
 
         public void DecrementTraffic(int mode) {
         switch(mode) {
             case 1:
-                path1traffic--;
+                traffic[0]--;
                 break;
 
             case 2:
-                path2traffic--;
+                traffic[1]--;
                 break;
 
             case 3:
-                path3traffic--;
+                traffic[2]--;
                 break;
 
             case 4:
-                path4traffic--;
+                traffic[3]--;
                 break;
         }
 
         totalTraffic--;
+        UpdatePathText(mode);
         UpdateTrafficText();
+    }
+
+    private void HandleTraffic()
+    {
+        for(int i = 0; i < traffic.Count; i++)
+        {
+            if ((float)traffic[i] >= (float)current*1.5f) {
+            
+                
+
+            }
+        }
+    }
+
+    private void flip(int red, int green)
+    {
+        lights[red].gameObject.layer =8;
+        lights[green].gameObject.layer = 9;
     }
 
     private void UpdateTrafficText() {
         trafficText.text = "Total cars: " + totalTraffic;
+    }
+
+
+    private void UpdatePathText(int mode)
+    {
+        switch(mode)
+        {
+            case 1:
+                path1Text.text = "Cars on Path 1: " + traffic[0];
+                break;
+            case 2:
+                path2Text.text = "Cars on Path 2: " + traffic[1];
+                break;
+            case 3:
+                path3Text.text = "Cars on Path 3: " + traffic[2];
+                break;
+            case 4:
+                path4Text.text = "Cars on Path 4: " + traffic[3];
+                break;
+        }
     }
 
     public int GetPath1Traffic() {

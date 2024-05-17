@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class Generate : MonoBehaviour
 {
+    [SerializeField] private float carRate;
     [SerializeField] private GameObject carType;
     void Start()
     {
@@ -13,7 +14,7 @@ public class Generate : MonoBehaviour
     IEnumerator generate() {
         Instantiate(carType, new Vector3(0,0,0), Quaternion.identity);
         
-        yield return new WaitForSecondsRealtime(3);
+        yield return new WaitForSecondsRealtime(carRate);
 
         StartCoroutine(generate());
     }
