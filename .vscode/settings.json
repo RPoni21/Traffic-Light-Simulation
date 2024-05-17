@@ -52,5 +52,5 @@
         "Temp/": true
     },
     "dotnet.preferCSharpExtension": true,
-    "dotnet.defaultSolution": "Ralf Poni Graduation Project 2024.sln"
+    "dotnet.defaultSolution": "Ralf-Poni-Graduation-Project-2024.sln"
 }

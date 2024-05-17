@@ -320,7 +320,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   pathCreator:
   - {fileID: 8724800967824126807, guid: ac661e3525b0f2846ab0345bfb5fe530, type: 3}
-  - {fileID: 620815158290654152, guid: febf231d6ef4c584694a628595ddd25d, type: 3}
+  - {fileID: 2767077433569810260, guid: 95e66fb27e5aa404d9ebccceda800e58, type: 3}
   speed: 10
   stop: 1
   maxDistance: 2

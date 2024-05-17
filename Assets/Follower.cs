@@ -15,6 +15,9 @@ public class Follower : MonoBehaviour
    private float saveSpeed;
    private float distanceTravelled;
    private PathCreator thisPath;
+   private bool seen = false;
+   private bool gone = true;
+   private TrafficLoad trafficLoad;
 
 
    void Start() {
@@ -39,8 +42,28 @@ public class Follower : MonoBehaviour
     
       if (Physics.Raycast(ray, out RaycastHit hit, maxDistance)) {
          
-         if(hit.collider.gameObject.layer == 9 || hit.collider.gameObject.name == "Plane" || hit.collider.gameObject.layer == 7 ) {
+         if(hit.collider.gameObject.layer == 9 || hit.collider.gameObject.name == "Plane" || hit.collider.gameObject.layer == 7 || hit.collider.gameObject.layer == 14
+            || hit.collider.gameObject.layer == 15) {
+            
             IncreaseSpeed();
+
+            if(hit.collider.gameObject.layer == 14 && !seen) {
+               // Debug.Log("Adding");
+               if(hit.collider.GetComponent<TrafficLoad>() != null) {
+               trafficLoad = hit.collider.GetComponent<TrafficLoad>();
+               trafficLoad.Increment();
+               seen = true;
+               gone = false;
+               }
+            }
+         
+            if(hit.collider.gameObject.layer == 15 && !gone) {
+               if(trafficLoad != null) {
+               Debug.Log("Decreasing");
+               trafficLoad.Decrement();
+               gone = true;
+               }
+            }
          }
          else if (hit.collider.gameObject.layer == 6) {
             Debug.Log("DESTROY1!");
@@ -78,5 +101,9 @@ public class Follower : MonoBehaviour
          if (speed < 0) {speed = 0;}
     }
     
+
+    private void OnTriggerEnter(Collider other) {
+      Debug.Log(other.name);
+    }
    }
 
