@@ -12,20 +12,24 @@ public class TrafficLight : MonoBehaviour
     List<GameObject> lights = new List<GameObject>();
     GameObject active;
     float saveTime;
-    int track = 0;
+
     int path1traffic = 0;
     int path2traffic = 0;
     int path3traffic = 0;
     int path4traffic = 0;
     int totalTraffic = 0;
     List<int> traffic = new List<int>();
-    int current;
+
+    int currentTrack;
     int toChange;
+    bool setToChange = true;
+
     public Text trafficText;
     public Text path1Text;
     public Text path2Text;
     public Text path3Text;
     public Text path4Text;
+    public Text greenLightText;
 
     private void Awake() {
         if (Instance != null && Instance != this)
@@ -46,12 +50,15 @@ public class TrafficLight : MonoBehaviour
         lights.Add(transform.GetChild(2).GetChild(3).gameObject);
         lights.Add(transform.GetChild(3).GetChild(3).gameObject);
 
+
         traffic.Add(path1traffic);
         traffic.Add(path2traffic);
         traffic.Add(path3traffic);
         traffic.Add(path4traffic);
 
-        current = 0;
+        StartBasic();
+
+        currentTrack = 0;
         toChange = 1;
         saveTime = timeToChange;
 
@@ -62,41 +69,63 @@ public class TrafficLight : MonoBehaviour
     void Update()
     {
         basicSystem();
+        greenLightText.text = "Green light remaining: " + timeToChange; 
 
     }
 
     void basicSystem(){
-          if(timeToChange >= 0) {
+        if (timeToChange >= saveTime / 1.5f) {
             timeToChange -= Time.deltaTime;
-        } else {
-            Debug.Log("Time out");
+            
+        } else if (timeToChange > 0)
+        {
+            HandleTraffic();
+            timeToChange -= Time.deltaTime;
+        }
+        else
+        {
+            
+            Debug.Log("Time out, changing from " + currentTrack + " to " + toChange);
             timeToChange = saveTime;
-            lights[track].gameObject.layer = 8;
-            track++;
-            if(track > 3) track = 0;
-            lights[track].gameObject.layer = 9;
-            active = lights[track];
+
+            lights[currentTrack].gameObject.layer = 8;
+            currentTrack = toChange;
+            Debug.Log("Current: " + currentTrack);
+            Debug.Log("ToChange: " + toChange);
+            toChange++;
+            if (toChange > 3) toChange = 0;
+            lights[currentTrack].gameObject.layer = 9;
+            setToChange = true;
+
             }
+    }
+
+    void StartBasic()
+    {
+        lights[0].gameObject.layer = 9;
+        lights[1].gameObject.layer = 8;
+        lights[2].gameObject.layer = 8;
+        lights[3].gameObject.layer = 8;
     }
 
     void CurrentGreenAndFrontRightGreen() {
            if(timeToChange >= 0) {
             timeToChange -= Time.deltaTime;
         } else {
-            int frontTrack = track+2;
+            int frontTrack = currentTrack+2;
             if(frontTrack > 3) frontTrack -= 4;
             Debug.Log("Time out");
             
             timeToChange = saveTime;
 
-            lights[track].gameObject.layer = 8;
+            lights[currentTrack].gameObject.layer = 8;
             lights[frontTrack].gameObject.layer = 8;
             
-            track++;
+            currentTrack++;
 
-            if(track > 3) track = 0;
-            lights[track].gameObject.layer = 9;
-            active = lights[track]; 
+            if(currentTrack > 3) currentTrack = 0;
+            lights[currentTrack].gameObject.layer = 9;
+            active = lights[currentTrack]; 
 
             frontTrack++;
             if(frontTrack > 3) frontTrack -= 4;
@@ -154,14 +183,22 @@ public class TrafficLight : MonoBehaviour
         UpdatePathText(mode);
         UpdateTrafficText();
     }
-
     private void HandleTraffic()
     {
-        for(int i = 0; i < traffic.Count; i++)
+        
+        for (int i = 0; i < 4; i++)
         {
-            if ((float)traffic[i] >= (float)current*1.5f) {
-            
-                
+            if (i > 3) i = 0;
+            if (setToChange && timeToChange <= (saveTime / 2f) && ((float)traffic[currentTrack] < (float)traffic[(i + currentTrack) % 4] * 0.75f))
+            {
+
+                Debug.Log("Changing to track " + (i + 1));
+                Debug.Log("Traffic in current: " + traffic[i]);
+
+                timeToChange /= 2;
+
+                toChange = (i + currentTrack) % 4;
+                setToChange = false;
 
             }
         }
@@ -169,7 +206,7 @@ public class TrafficLight : MonoBehaviour
 
     private void flip(int red, int green)
     {
-        lights[red].gameObject.layer =8;
+        lights[red].gameObject.layer = 8;
         lights[green].gameObject.layer = 9;
     }
 

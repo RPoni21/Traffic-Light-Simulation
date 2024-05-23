@@ -20,7 +20,6 @@ public class TrafficLoad : MonoBehaviour
         if(timeToChange >= 0) {
             timeToChange -= Time.deltaTime;
         } else {
-           Debug.Log(transform.gameObject.name + " " + load);
             timeToChange = 1;
         }
     }
