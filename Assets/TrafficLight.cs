@@ -29,7 +29,16 @@ public class TrafficLight : MonoBehaviour
     public Text path2Text;
     public Text path3Text;
     public Text path4Text;
+    public Text avgTrafficText;
+    public Text avgCrossingText;
     public Text greenLightText;
+
+    private float timeElapsed = 0;
+    private float avgTimeToCross = 0;
+    private float allTimeToCross = 0;
+    private float crossesSent = 1;
+    private float avgTraffic;   
+    private float allObjectsEver = 0;
 
     private void Awake() {
         if (Instance != null && Instance != this)
@@ -68,7 +77,9 @@ public class TrafficLight : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        timeElapsed += Time.deltaTime;
         basicSystem();
+        calculateAverage();
         greenLightText.text = "Green light remaining: " + timeToChange; 
 
     }
@@ -160,28 +171,14 @@ public class TrafficLight : MonoBehaviour
         UpdateTrafficText();
     }
 
-        public void DecrementTraffic(int mode) {
-        switch(mode) {
-            case 1:
-                traffic[0]--;
-                break;
-
-            case 2:
-                traffic[1]--;
-                break;
-
-            case 3:
-                traffic[2]--;
-                break;
-
-            case 4:
-                traffic[3]--;
-                break;
-        }
-
+        public void DecrementTraffic(int mode, float cross) {
+        if(mode > 0 && mode < 5){
+        traffic[mode-1]--;
         totalTraffic--;
+        calculateAvgCrossingTime(cross);
         UpdatePathText(mode);
         UpdateTrafficText();
+        }
     }
     private void HandleTraffic()
     {
@@ -234,10 +231,17 @@ public class TrafficLight : MonoBehaviour
         }
     }
 
-    public int GetPath1Traffic() {
-        return path1traffic;
+    private void calculateAverage(){
+        allObjectsEver += totalTraffic * Time.deltaTime;
+        avgTraffic = allObjectsEver / timeElapsed;
+        avgTrafficText.text = "Average total cars " + avgTraffic;
     }
 
-    
-
+    private void calculateAvgCrossingTime(float cross) {
+        allTimeToCross += cross;
+        crossesSent++;
+        avgTimeToCross = allTimeToCross/crossesSent;
+        avgCrossingText.text = "Average time to cross: " + avgTimeToCross;
     }
+
+}

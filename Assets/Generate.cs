@@ -1,21 +1,36 @@
+using System;
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class Generate : MonoBehaviour
 {
     [SerializeField] private float carRate;
     [SerializeField] private GameObject carType;
+    float tempRate;
+    
+    
     void Start()
     {
-        StartCoroutine(generate());
+        if(carRate != 0){
+        tempRate = carRate;
+            Instantiate(carType, new Vector3(0,0,0), Quaternion.identity);
+        //StartCoroutine(generate());
+        }
     }
 
-    IEnumerator generate() {
-        Instantiate(carType, new Vector3(0,0,0), Quaternion.identity);
-        
-        yield return new WaitForSecondsRealtime(carRate);
+    void Update() {
+        if (carRate != 0) {
+        if (tempRate > 0) {
+            tempRate -= Time.deltaTime;
+        } else {
+            Instantiate(carType, new Vector3(0,0,0), Quaternion.identity);
+            tempRate = carRate;
+        }
+        }
+    }
 
-        StartCoroutine(generate());
+    public void CarRate(float rate){
+        carRate = rate;
+        tempRate += Math.Abs(carRate - rate);
     }
 }

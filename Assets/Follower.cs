@@ -18,6 +18,8 @@ public class Follower : MonoBehaviour
    private bool seen = false;
    private bool gone = true;
    private TrafficLoad trafficLoad;
+   
+   private float timeAlive = 0;
 
 
    void Start() {
@@ -30,7 +32,7 @@ public class Follower : MonoBehaviour
       saveSpeed = speed;
    }
    void Update() {
-    
+    timeAlive += Time.deltaTime;
     distanceTravelled += speed * Time.deltaTime;
 
     
@@ -59,14 +61,13 @@ public class Follower : MonoBehaviour
          
             if(hit.collider.gameObject.layer == 15 && !gone) {
                if(trafficLoad != null) {
-               Debug.Log("Decreasing");
-               trafficLoad.Decrement();
+               trafficLoad.Decrement(timeAlive);
                gone = true;
                }
             }
          }
          else if (hit.collider.gameObject.layer == 6) {
-            Debug.Log("DESTROY1!");
+            Debug.Log("Car was alive for " + timeAlive);
             Destroy(gameObject);
          }
          else {

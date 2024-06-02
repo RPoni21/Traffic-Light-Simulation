@@ -29,9 +29,9 @@ public class TrafficLoad : MonoBehaviour
         TrafficLight.Instance.IncrementTraffic(mode);
     }
 
-    public void Decrement() {
+    public void Decrement(float cross) {
         load--;
-        TrafficLight.Instance.DecrementTraffic(mode);
+        TrafficLight.Instance.DecrementTraffic(mode, cross);
     }
 
     // void OnTriggerEnter(Collider other)
