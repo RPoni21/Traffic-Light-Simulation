@@ -76,8 +76,12 @@ public class Follower : MonoBehaviour
             IncreaseSpeed();
          } else if (hit.collider.gameObject.layer == 12 && rightSide)
           IncreaseSpeed();
-         else 
+         else {
           DecreaseSpeed();
+          if(Vector3.Distance(transform.position, hit.collider.transform.position) < 10f) {
+            speed = 0;
+          }
+         }
 
          //Debug.Log(hit.collider.gameObject.tag);
          //Debug.Log(hit.collider.gameObject.name + " Was hit");
@@ -98,7 +102,7 @@ public class Follower : MonoBehaviour
     }
 
     public void DecreaseSpeed() {
-      speed -= saveSpeed*0.1f;
+      speed -= saveSpeed*0.1f*Time.timeScale;
          if (speed < 0) {speed = 0;}
     }
     

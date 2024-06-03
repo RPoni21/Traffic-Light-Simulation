@@ -324,3 +324,4 @@ MonoBehaviour:
   speed: 10
   stop: 1
   maxDistance: 2
+  rightSide: 1

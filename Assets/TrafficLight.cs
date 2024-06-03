@@ -39,6 +39,7 @@ public class TrafficLight : MonoBehaviour
     private float crossesSent = 1;
     private float avgTraffic;   
     private float allObjectsEver = 0;
+    private float dynamicWeight = 0.75f;
 
     private void Awake() {
         if (Instance != null && Instance != this)
@@ -79,7 +80,7 @@ public class TrafficLight : MonoBehaviour
     {
         timeElapsed += Time.deltaTime;
         basicSystem();
-        calculateAverage();
+        CalculateAverage();
         greenLightText.text = "Green light remaining: " + timeToChange; 
 
     }
@@ -148,34 +149,20 @@ public class TrafficLight : MonoBehaviour
 
 
     public void IncrementTraffic(int mode) {
-        switch(mode) {
-            case 1:
-                traffic[0]++;
-                break;
-
-            case 2:
-                traffic[1]++;
-                break;
-
-            case 3:
-                traffic[2]++;
-                break;
-
-            case 4:
-                traffic[3]++;
-                break;
-        }
+        if(mode > 0 && mode < 5) {
+        traffic[mode-1]++;
 
         totalTraffic++;
         UpdatePathText(mode);
         UpdateTrafficText();
+        }
     }
 
         public void DecrementTraffic(int mode, float cross) {
         if(mode > 0 && mode < 5){
         traffic[mode-1]--;
         totalTraffic--;
-        calculateAvgCrossingTime(cross);
+        CalculateAvgCrossingTime(cross);
         UpdatePathText(mode);
         UpdateTrafficText();
         }
@@ -186,7 +173,7 @@ public class TrafficLight : MonoBehaviour
         for (int i = 0; i < 4; i++)
         {
             if (i > 3) i = 0;
-            if (setToChange && timeToChange <= (saveTime / 2f) && ((float)traffic[currentTrack] < (float)traffic[(i + currentTrack) % 4] * 0.75f))
+            if (setToChange && timeToChange <= (saveTime / 2f) && ((float)traffic[currentTrack] < (float)traffic[(i + currentTrack) % 4] * dynamicWeight))
             {
 
                 Debug.Log("Changing to track " + (i + 1));
@@ -231,17 +218,35 @@ public class TrafficLight : MonoBehaviour
         }
     }
 
-    private void calculateAverage(){
+    private void CalculateAverage(){
         allObjectsEver += totalTraffic * Time.deltaTime;
         avgTraffic = allObjectsEver / timeElapsed;
         avgTrafficText.text = "Average total cars " + avgTraffic;
     }
 
-    private void calculateAvgCrossingTime(float cross) {
+    private void CalculateAvgCrossingTime(float cross) {
         allTimeToCross += cross;
         crossesSent++;
         avgTimeToCross = allTimeToCross/crossesSent;
         avgCrossingText.text = "Average time to cross: " + avgTimeToCross;
+    }
+
+    public float GetDynamicWeight() {
+        return dynamicWeight;
+    }
+
+    public void SetDynamicWeight(float weight) {
+        dynamicWeight = weight;
+    }
+
+    public void SetTime(float time) {
+        timeToChange += saveTime - time;
+        if (timeToChange < 0) timeToChange = 0;
+        saveTime = time;
+    }
+
+    public float GetTime(){
+        return saveTime;
     }
 
 }
