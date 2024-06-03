@@ -67,7 +67,7 @@ public class Follower : MonoBehaviour
             }
          }
          else if (hit.collider.gameObject.layer == 6) {
-            Debug.Log("Car was alive for " + timeAlive);
+           // Debug.Log("Car was alive for " + timeAlive);
             Destroy(gameObject);
          }
          else {
@@ -83,11 +83,8 @@ public class Follower : MonoBehaviour
           }
          }
 
-         //Debug.Log(hit.collider.gameObject.tag);
-         //Debug.Log(hit.collider.gameObject.name + " Was hit");
-
-            }
-         }
+       }
+    }
          else {
             IncreaseSpeed();
          }

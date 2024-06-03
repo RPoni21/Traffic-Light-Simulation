@@ -37,12 +37,19 @@ public class TrafficLight : MonoBehaviour
     public Text avgPath3Text;
     public Text avgPath4Text;
     public Text avgCrossingText;
+    public Text avgCrossing1Text;
+    public Text avgCrossing2Text;
+    public Text avgCrossing3Text;
+    public Text avgCrossing4Text;
     public Text greenLightText;
 
     private float timeElapsed = 0;
     private float avgTimeToCross = 0;
     private float allTimeToCross = 0;
     private float crossesSent = 1;
+    private float[] crossesPath = {0, 0, 0 , 0};
+    private float[] crossesSentPath = {1, 1, 1, 1};
+    private float[] avgTimeToCrossPath = {0, 0, 0, 0};
     private float avgTraffic;   
     private float[] avgTrafficPath = new float[4];
     private float allObjectsEver = 0;
@@ -157,8 +164,6 @@ public class TrafficLight : MonoBehaviour
             }
     }
 
-
-
     public void IncrementTraffic(int mode) {
         if(mode > 0 && mode < 5) {
         traffic[mode-1]++;
@@ -172,8 +177,9 @@ public class TrafficLight : MonoBehaviour
         public void DecrementTraffic(int mode, float cross) {
         if(mode > 0 && mode < 5){
         traffic[mode-1]--;
+
         totalTraffic--;
-        CalculateAvgCrossingTime(cross);
+        CalculateAvgCrossingTime(mode, cross);
         UpdatePathText(mode);
         UpdateTrafficText();
         }
@@ -246,11 +252,23 @@ public class TrafficLight : MonoBehaviour
 
     }
 
-    private void CalculateAvgCrossingTime(float cross) {
+    private void CalculateAvgCrossingTime(int mode, float cross) {
         allTimeToCross += cross;
         crossesSent++;
+        
+        crossesSentPath[mode-1]++;
+        crossesPath[mode-1] += cross;
+
         avgTimeToCross = allTimeToCross/crossesSent;
-        avgCrossingText.text = "Average time to cross: " + avgTimeToCross;
+        avgCrossingText.text = "Average time to cross: " + avgTimeToCross.ToString("F3");
+
+          for(int i = 0; i < 4; i++)
+            avgTimeToCrossPath[i] = crossesPath[i] / crossesSentPath[i];
+
+        avgCrossing1Text.text = "P1 Avg Cross: "  + avgTimeToCrossPath[0].ToString("F2");
+        avgCrossing2Text.text = "P2 Avg Cross: " + avgTimeToCrossPath[1].ToString("F2");
+        avgCrossing3Text.text = "P3 Avg Cross: " + avgTimeToCrossPath[2].ToString("F2");
+        avgCrossing4Text.text = "P4 Avg Cross: " + avgTimeToCrossPath[3].ToString("F2");
     }
 
     public float GetDynamicWeight() {

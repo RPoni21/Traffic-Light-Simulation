@@ -9,11 +9,14 @@ using UnityEngine.UI;
 
 public class UIScript : MonoBehaviour
 {
+    
+    public static UIScript Instance { get; private set;}
     public  GameObject regularCanvas;
     public GameObject menuCanvas;
     public GameObject settingsCanvas;
     public GameObject trafficNumbers;
     public GameObject avgTrafficNumbers;
+    public GameObject crossingAvgBackground;
     public Button pauseButton;
     public Button totalsAverageButton;
     public Button setSpeedButton;
@@ -29,11 +32,25 @@ public class UIScript : MonoBehaviour
     public InputField trafficLightInput;
     public InputField timeToSetInput;
     public InputField timeToCutInput;
-    private bool isPaused = false;
+    private bool isPaused = true;
     private float[] scales = {1, 2, 5};
     private int currentScale = 0;
+    private bool firstStart = true;
+
+    private void Awake() {
+        if (Instance != null && Instance != this)
+        {
+            Destroy(gameObject);
+        }
+        else
+        {
+            Instance = this;
+            DontDestroyOnLoad(gameObject);
+        }
+    }
 
     void Start(){
+        Time.timeScale = 0;
         pauseButton.GetComponentInChildren<Text>().text = "Pause";
         setSpeedButton.GetComponentInChildren<Text>().text = "1X";
         menuButton.GetComponentInChildren<Text>().text = "Menu";
@@ -51,13 +68,18 @@ public class UIScript : MonoBehaviour
         menuCanvas.SetActive(false);
         settingsCanvas.SetActive(false);
         avgTrafficNumbers.SetActive(false);
-        
+        crossingAvgBackground.SetActive(false);
     }
 
     void Pause(){
         if(isPaused){
             Time.timeScale = scales[currentScale];
             pauseButton.GetComponentInChildren<Text>().text = "Pause";
+
+            if(firstStart){
+                FileBuilder.Instance.CollectInitial();   
+                firstStart = false;
+            }
         } else {
             Time.timeScale = 0;
              pauseButton.GetComponentInChildren<Text>().text = "Resume";
@@ -89,12 +111,14 @@ public class UIScript : MonoBehaviour
         if (trafficNumbers.activeSelf){
         trafficNumbers.SetActive(false);
         avgTrafficNumbers.SetActive(true);
+        crossingAvgBackground.SetActive(true);
         totalsAverageButton.GetComponentInChildren<Text>().text = "Totals";
         }
         
         else {
             trafficNumbers.SetActive(true);
             avgTrafficNumbers.SetActive(false);
+            crossingAvgBackground.SetActive(false);
         totalsAverageButton.GetComponentInChildren<Text>().text = "Averages";
         }
     }
@@ -155,5 +179,9 @@ public class UIScript : MonoBehaviour
         } catch (Exception e) {
             timeToCutInput.text = "Enter a positive float between 0 and 1";
         }
+    }
+
+    public bool GetFirstStart() {
+        return firstStart;
     }
 }

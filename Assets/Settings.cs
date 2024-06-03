@@ -1,15 +1,29 @@
 using System.Collections;
 using System.Collections.Generic;
+using JetBrains.Annotations;
 using UnityEngine;
 using UnityEngine.UI;
 
 public class Settings : MonoBehaviour
 {
+    public static Settings Instance { get; private set;}
     public Generate[] generators; 
 
     public InputField[] inputs;
 
     public Button[] buttons;
+
+    private void Awake() {
+        if (Instance != null && Instance != this)
+        {
+            Destroy(gameObject);
+        }
+        else
+        {
+            Instance = this;
+            DontDestroyOnLoad(gameObject);
+        }
+    }
 
     // Start is called before the first frame update
     void Start()
@@ -20,6 +34,7 @@ public class Settings : MonoBehaviour
             buttons[i].onClick.AddListener(() => ClickEvent(index));
         
         
+    }
     }
 
     // Update is called once per frame
@@ -40,5 +55,14 @@ public class Settings : MonoBehaviour
             Debug.LogError("Invalid input. Please enter a valid number.");
         }
     }
+
+    public float[] GetRates(){
+        float[] toReturn = new float[generators.Length];
+        for (int i = 0; i < 8; i++){
+            toReturn[i] = generators[i].GetCarRate();
+        }
+
+        return toReturn;
+    }
 }
-}
+

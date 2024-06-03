@@ -14,7 +14,6 @@ public class Generate : MonoBehaviour
         if(carRate != 0){
         tempRate = carRate;
             Instantiate(carType, new Vector3(0,0,0), Quaternion.identity);
-        //StartCoroutine(generate());
         }
     }
 
@@ -32,5 +31,9 @@ public class Generate : MonoBehaviour
     public void CarRate(float rate){
         carRate = rate;
         tempRate += Math.Abs(carRate - rate);
+    }
+
+    public float GetCarRate(){
+        return carRate;
     }
 }
