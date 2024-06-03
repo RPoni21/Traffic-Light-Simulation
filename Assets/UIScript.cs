@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Globalization;
+using System.Security.Cryptography;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UI;
@@ -11,14 +12,23 @@ public class UIScript : MonoBehaviour
     public  GameObject regularCanvas;
     public GameObject menuCanvas;
     public GameObject settingsCanvas;
+    public GameObject trafficNumbers;
+    public GameObject avgTrafficNumbers;
     public Button pauseButton;
+    public Button totalsAverageButton;
     public Button setSpeedButton;
     public Button menuButton;
     public Button closeMenuButton;
     public Button dynamicButton;
     public Button trafficLightButton;
+    public Button timeToSetButton;
+    public Button timeToCutButton;
+    public Button settingsButton;
+    public Button settingsBackButton;
     public InputField dynamicInput;
     public InputField trafficLightInput;
+    public InputField timeToSetInput;
+    public InputField timeToCutInput;
     private bool isPaused = false;
     private float[] scales = {1, 2, 5};
     private int currentScale = 0;
@@ -28,13 +38,20 @@ public class UIScript : MonoBehaviour
         setSpeedButton.GetComponentInChildren<Text>().text = "1X";
         menuButton.GetComponentInChildren<Text>().text = "Menu";
         pauseButton.onClick.AddListener(Pause);
+        settingsButton.onClick.AddListener(switchToSettings);
+        settingsBackButton.onClick.AddListener(goBackToMenu);
+        totalsAverageButton.onClick.AddListener(SwitchTotalsAverages);
         setSpeedButton.onClick.AddListener(ChangeTimeScale);
         menuButton.onClick.AddListener(ShowMenu);
         closeMenuButton.onClick.AddListener(CloseMenu);
         dynamicButton.onClick.AddListener(ChangeWeight);
-        trafficLightButton.onClick.AddListener(ChangeTrafficLight);
+        trafficLightButton.onClick.AddListener(ChangeTrafficLightTime);
+        timeToSetButton.onClick.AddListener(ChangeTimeToSet);
+        timeToCutButton.onClick.AddListener(ChangeTimeToCut);
         menuCanvas.SetActive(false);
         settingsCanvas.SetActive(false);
+        avgTrafficNumbers.SetActive(false);
+        
     }
 
     void Pause(){
@@ -68,27 +85,75 @@ public class UIScript : MonoBehaviour
         menuCanvas.SetActive(false);
     }
 
+    void SwitchTotalsAverages() {
+        if (trafficNumbers.activeSelf){
+        trafficNumbers.SetActive(false);
+        avgTrafficNumbers.SetActive(true);
+        totalsAverageButton.GetComponentInChildren<Text>().text = "Totals";
+        }
+        
+        else {
+            trafficNumbers.SetActive(true);
+            avgTrafficNumbers.SetActive(false);
+        totalsAverageButton.GetComponentInChildren<Text>().text = "Averages";
+        }
+    }
+
+    void switchToSettings() {
+        menuCanvas.SetActive(false);
+        settingsCanvas.SetActive(true);
+    }
+
+    void goBackToMenu() {
+        settingsCanvas.SetActive(false);
+        menuCanvas.SetActive(true);
+    }
+
     void ChangeWeight() {
         try {
             float weight = float.Parse(dynamicInput.text, CultureInfo.InvariantCulture.NumberFormat);
-
+            if(weight < 0 || weight > 1) throw new Exception();
             TrafficLight.Instance.SetDynamicWeight(weight);
             dynamicInput.text = TrafficLight.Instance.GetDynamicWeight().ToString();
 
         } catch (Exception e) {
-            dynamicInput.text = "Enter a float";
+            dynamicInput.text = "Enter a positive float between 0 and 1";
         }
     }
 
-    void ChangeTrafficLight() {
+    void ChangeTrafficLightTime() {
         try {
             float time = float.Parse(trafficLightInput.text, CultureInfo.InvariantCulture.NumberFormat);
-
+            if(time < 0) throw new Exception();
             TrafficLight.Instance.SetTime(time);
             trafficLightInput.text = TrafficLight.Instance.GetTime().ToString();
 
         } catch (Exception e) {
-            trafficLightInput.text = "Enter a float";
+            trafficLightInput.text = "Enter a positive float";
+        }
+    }
+        // Time to set refers to the time when the traffic light begins to check
+        // the other lanes for allocating  the next streetlight to be turned on.
+        void ChangeTimeToSet() {
+        try {
+            float time = float.Parse(timeToSetInput.text, CultureInfo.InvariantCulture.NumberFormat);
+            if (time < 0 || time > 1) throw new Exception();
+            TrafficLight.Instance.SetTimeToSet(time);
+            timeToSetInput.text = TrafficLight.Instance.GetTimeToSet().ToString();
+
+        } catch (Exception e) {
+            timeToSetInput.text = "Enter a positive float between 0 and 1";
+        }
+    }
+       void ChangeTimeToCut() {
+        try {
+            float time = float.Parse(timeToCutInput.text, CultureInfo.InvariantCulture.NumberFormat);
+            if (time < 0 || time > 1) throw new Exception();
+            TrafficLight.Instance.SetTimeToCut(time);
+            timeToCutInput.text = TrafficLight.Instance.GetTimeToCut().ToString();
+
+        } catch (Exception e) {
+            timeToCutInput.text = "Enter a positive float between 0 and 1";
         }
     }
 }

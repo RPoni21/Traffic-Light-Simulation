@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Rendering;
 using UnityEngine.UI;
 
 public class TrafficLight : MonoBehaviour
@@ -19,6 +20,7 @@ public class TrafficLight : MonoBehaviour
     int path4traffic = 0;
     int totalTraffic = 0;
     List<int> traffic = new List<int>();
+    List<float> trafficAvg = new List<float>();
 
     int currentTrack;
     int toChange;
@@ -30,6 +32,10 @@ public class TrafficLight : MonoBehaviour
     public Text path3Text;
     public Text path4Text;
     public Text avgTrafficText;
+    public Text avgPath1Text;
+    public Text avgPath2Text;
+    public Text avgPath3Text;
+    public Text avgPath4Text;
     public Text avgCrossingText;
     public Text greenLightText;
 
@@ -38,8 +44,13 @@ public class TrafficLight : MonoBehaviour
     private float allTimeToCross = 0;
     private float crossesSent = 1;
     private float avgTraffic;   
+    private float[] avgTrafficPath = new float[4];
     private float allObjectsEver = 0;
+    private float[] allObjectsPath = {0, 0, 0, 0};
     private float dynamicWeight = 0.75f;
+    private float timeToSet = 0.5f;
+    private float timeToCut = 0.5f;
+
 
     private void Awake() {
         if (Instance != null && Instance != this)
@@ -80,8 +91,8 @@ public class TrafficLight : MonoBehaviour
     {
         timeElapsed += Time.deltaTime;
         basicSystem();
-        CalculateAverage();
-        greenLightText.text = "Green light remaining: " + timeToChange; 
+        CalculateAverages();
+        greenLightText.text = timeToChange.ToString("F2"); 
 
     }
 
@@ -173,13 +184,13 @@ public class TrafficLight : MonoBehaviour
         for (int i = 0; i < 4; i++)
         {
             if (i > 3) i = 0;
-            if (setToChange && timeToChange <= (saveTime / 2f) && ((float)traffic[currentTrack] < (float)traffic[(i + currentTrack) % 4] * dynamicWeight))
+            if (setToChange && timeToChange <= (saveTime * timeToSet) && ((float)traffic[currentTrack] < (float)traffic[(i + currentTrack) % 4] * dynamicWeight))
             {
 
                 Debug.Log("Changing to track " + (i + 1));
                 Debug.Log("Traffic in current: " + traffic[i]);
 
-                timeToChange /= 2;
+                timeToChange *= timeToCut;
 
                 toChange = (i + currentTrack) % 4;
                 setToChange = false;
@@ -204,24 +215,35 @@ public class TrafficLight : MonoBehaviour
         switch(mode)
         {
             case 1:
-                path1Text.text = "Cars on Path 1: " + traffic[0];
+                path1Text.text = "Cars on Path 1: " + traffic[0].ToString();
                 break;
             case 2:
-                path2Text.text = "Cars on Path 2: " + traffic[1];
+                path2Text.text = "Cars on Path 2: " + traffic[1].ToString();
                 break;
             case 3:
-                path3Text.text = "Cars on Path 3: " + traffic[2];
+                path3Text.text = "Cars on Path 3: " + traffic[2].ToString();
                 break;
             case 4:
-                path4Text.text = "Cars on Path 4: " + traffic[3];
+                path4Text.text = "Cars on Path 4: " + traffic[3].ToString();
                 break;
         }
     }
 
-    private void CalculateAverage(){
+    private void CalculateAverages(){
         allObjectsEver += totalTraffic * Time.deltaTime;
+        for(int i = 0; i < 4; i++)
+            allObjectsPath[i]  += traffic[i] * Time.deltaTime;
+
         avgTraffic = allObjectsEver / timeElapsed;
-        avgTrafficText.text = "Average total cars " + avgTraffic;
+        for(int i = 0; i < 4; i++)
+            avgTrafficPath[i] = allObjectsPath[i] / timeElapsed;
+
+        avgTrafficText.text = "Avg Total Cars " + avgTraffic.ToString("F2");
+        avgPath1Text.text = "P1 Avg Cars: "  + avgTrafficPath[0].ToString("F2");
+        avgPath2Text.text = "P2 Avg Cars: " + avgTrafficPath[1].ToString("F2");
+        avgPath3Text.text = "P3 Avg Cars: " + avgTrafficPath[2].ToString("F2");
+        avgPath4Text.text = "P4 Avg Cars: " + avgTrafficPath[3].ToString("F2");
+
     }
 
     private void CalculateAvgCrossingTime(float cross) {
@@ -240,13 +262,32 @@ public class TrafficLight : MonoBehaviour
     }
 
     public void SetTime(float time) {
-        timeToChange += saveTime - time;
+        timeToChange += time - saveTime;
         if (timeToChange < 0) timeToChange = 0;
         saveTime = time;
     }
 
     public float GetTime(){
         return saveTime;
+    }
+
+    public void SetTimeToSet(float time) {
+        timeToSet = time;
+    }
+
+    public float GetTimeToSet() {
+        return timeToSet;
+    }
+        public void SetTimeToCut(float time) {
+        timeToCut = time;
+    }
+
+    public float GetTimeToCut() {
+        return timeToCut;
+    }
+
+    public float[] GetAvgTrafficPath() {
+        return avgTrafficPath;
     }
 
 }
