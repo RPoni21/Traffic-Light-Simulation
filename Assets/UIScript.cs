@@ -1,9 +1,6 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Globalization;
-using System.Security.Cryptography;
-using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -17,6 +14,8 @@ public class UIScript : MonoBehaviour
     public GameObject trafficNumbers;
     public GameObject avgTrafficNumbers;
     public GameObject crossingAvgBackground;
+    public GameObject loggingErrorBackground;
+    public GameObject loggingSuccessBackground;
     public Button pauseButton;
     public Button totalsAverageButton;
     public Button setSpeedButton;
@@ -28,6 +27,7 @@ public class UIScript : MonoBehaviour
     public Button timeToCutButton;
     public Button settingsButton;
     public Button settingsBackButton;
+    public Button logButton;
     public InputField dynamicInput;
     public InputField trafficLightInput;
     public InputField timeToSetInput;
@@ -36,6 +36,7 @@ public class UIScript : MonoBehaviour
     private float[] scales = {1, 2, 5};
     private int currentScale = 0;
     private bool firstStart = true;
+    private Dictionary<string, string> changes = new Dictionary<string, string>();
 
     private void Awake() {
         if (Instance != null && Instance != this)
@@ -50,7 +51,6 @@ public class UIScript : MonoBehaviour
     }
 
     void Start(){
-        Time.timeScale = 0;
         pauseButton.GetComponentInChildren<Text>().text = "Pause";
         setSpeedButton.GetComponentInChildren<Text>().text = "1X";
         menuButton.GetComponentInChildren<Text>().text = "Menu";
@@ -65,20 +65,39 @@ public class UIScript : MonoBehaviour
         trafficLightButton.onClick.AddListener(ChangeTrafficLightTime);
         timeToSetButton.onClick.AddListener(ChangeTimeToSet);
         timeToCutButton.onClick.AddListener(ChangeTimeToCut);
+        logButton.onClick.AddListener(LogResults);
         menuCanvas.SetActive(false);
         settingsCanvas.SetActive(false);
         avgTrafficNumbers.SetActive(false);
         crossingAvgBackground.SetActive(false);
+        loggingErrorBackground.SetActive(false);
+        loggingSuccessBackground.SetActive(false);
     }
 
     void Pause(){
         if(isPaused){
+            Dictionary<int, string> carChanges = Settings.Instance.GetChanges();
             Time.timeScale = scales[currentScale];
             pauseButton.GetComponentInChildren<Text>().text = "Pause";
 
             if(firstStart){
-                FileBuilder.Instance.CollectInitial();   
+                Debug.Log(FileBuilder.Instance.CollectValues());   
                 firstStart = false;
+            }
+
+            else {
+
+            foreach (string key in changes.Keys) {
+                FileBuilder.Instance.AddChange(changes[key]);
+            }
+
+            changes.Clear();
+
+            foreach(int key in carChanges.Keys) {
+                FileBuilder.Instance.AddChange(carChanges[key]);
+            }
+            Settings.Instance.ClearChanges();
+            Debug.Log(FileBuilder.Instance.GetChanges());
             }
         } else {
             Time.timeScale = 0;
@@ -133,10 +152,13 @@ public class UIScript : MonoBehaviour
         menuCanvas.SetActive(true);
     }
 
-    void ChangeWeight() {
+    void ChangeWeight() {   
         try {
             float weight = float.Parse(dynamicInput.text, CultureInfo.InvariantCulture.NumberFormat);
             if(weight < 0 || weight > 1) throw new Exception();
+            if(!firstStart && weight != TrafficLight.Instance.GetDynamicWeight()) {
+                    changes["Weight"] = "weight to " + weight;
+            }
             TrafficLight.Instance.SetDynamicWeight(weight);
             dynamicInput.text = TrafficLight.Instance.GetDynamicWeight().ToString();
 
@@ -149,6 +171,9 @@ public class UIScript : MonoBehaviour
         try {
             float time = float.Parse(trafficLightInput.text, CultureInfo.InvariantCulture.NumberFormat);
             if(time < 0) throw new Exception();
+            if(!firstStart && time != TrafficLight.Instance.GetTime()) {
+                    changes["LightTime"] = "traffic light time from " + TrafficLight.Instance.GetTimeToSet().ToString("F2") +  " to " + time.ToString("F2");
+            }
             TrafficLight.Instance.SetTime(time);
             trafficLightInput.text = TrafficLight.Instance.GetTime().ToString();
 
@@ -157,11 +182,15 @@ public class UIScript : MonoBehaviour
         }
     }
         // Time to set refers to the time when the traffic light begins to check
-        // the other lanes for allocating  the next streetlight to be turned on.
+        // the other lanes for allocating the next streetlight to be turned on.
         void ChangeTimeToSet() {
         try {
             float time = float.Parse(timeToSetInput.text, CultureInfo.InvariantCulture.NumberFormat);
             if (time < 0 || time > 1) throw new Exception();
+
+            if(!firstStart && time != TrafficLight.Instance.GetTimeToSet()) {
+                    changes["TimeToSet"] = "time to set from " + TrafficLight.Instance.GetTimeToSet().ToString("F2") +  " to " + time.ToString("F2");
+            }
             TrafficLight.Instance.SetTimeToSet(time);
             timeToSetInput.text = TrafficLight.Instance.GetTimeToSet().ToString();
 
@@ -173,12 +202,27 @@ public class UIScript : MonoBehaviour
         try {
             float time = float.Parse(timeToCutInput.text, CultureInfo.InvariantCulture.NumberFormat);
             if (time < 0 || time > 1) throw new Exception();
+
+            if(!firstStart && time != TrafficLight.Instance.GetTimeToCut()) {
+                    changes["TimeToCut"] = "Time to cut from " + TrafficLight.Instance.GetTimeToCut().ToString("F2") +  " to " + time.ToString("F2");
+            }
+
             TrafficLight.Instance.SetTimeToCut(time);
             timeToCutInput.text = TrafficLight.Instance.GetTimeToCut().ToString();
 
         } catch (Exception e) {
             timeToCutInput.text = "Enter a positive float between 0 and 1";
         }
+    }
+
+    void LogResults(){
+      if(TrafficLight.Instance.GetTimeElapsed() < 60) {
+        loggingErrorBackground.SetActive(true);
+        return;
+      } 
+      loggingErrorBackground.SetActive(false);
+      loggingSuccessBackground.SetActive(true);
+      FileBuilder.Instance.LogResult();
     }
 
     public bool GetFirstStart() {

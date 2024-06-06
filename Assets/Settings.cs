@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Data;
 using JetBrains.Annotations;
 using UnityEngine;
 using UnityEngine.UI;
@@ -12,6 +13,8 @@ public class Settings : MonoBehaviour
     public InputField[] inputs;
 
     public Button[] buttons;
+
+    Dictionary<int, string> changes = new Dictionary<int, string>();
 
     private void Awake() {
         if (Instance != null && Instance != this)
@@ -29,25 +32,19 @@ public class Settings : MonoBehaviour
     void Start()
     {
         for (int i = 0; i < 8; i++) {
-            Debug.Log(generators[i]);
             int index = i;
             buttons[i].onClick.AddListener(() => ClickEvent(index));
         
-        
     }
     }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
-
     
     void ClickEvent(int index)
     {
         if (float.TryParse(inputs[index].text, out float rate))
         {
+            if (rate != generators[index].GetCarRate()) {
+                changes[index] = "spawn rate of " + generators[index].gameObject.name + " from " + generators[index].GetCarRate() + " to " + rate; 
+            }
             generators[index].CarRate(rate);
         }
         else
@@ -63,6 +60,14 @@ public class Settings : MonoBehaviour
         }
 
         return toReturn;
+    }
+
+    public Dictionary<int, string> GetChanges() {
+        return changes;
+    }
+
+    public void ClearChanges() {
+        changes.Clear();
     }
 }
 

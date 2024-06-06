@@ -20,7 +20,6 @@ public class TrafficLight : MonoBehaviour
     int path4traffic = 0;
     int totalTraffic = 0;
     List<int> traffic = new List<int>();
-    List<float> trafficAvg = new List<float>();
 
     int currentTrack;
     int toChange;
@@ -42,6 +41,7 @@ public class TrafficLight : MonoBehaviour
     public Text avgCrossing3Text;
     public Text avgCrossing4Text;
     public Text greenLightText;
+    public Text timeElapsedText;
 
     private float timeElapsed = 0;
     private float avgTimeToCross = 0;
@@ -67,12 +67,13 @@ public class TrafficLight : MonoBehaviour
         else
         {
             Instance = this;
-            DontDestroyOnLoad(gameObject); // Optional: Keeps the instance alive across scenes
+            DontDestroyOnLoad(gameObject);
         }
     }
 
     void Start()
     {
+        Time.timeScale = 0;
         lights.Add(transform.GetChild(0).GetChild(3).gameObject);
         lights.Add(transform.GetChild(1).GetChild(3).gameObject);
         lights.Add(transform.GetChild(2).GetChild(3).gameObject);
@@ -100,11 +101,12 @@ public class TrafficLight : MonoBehaviour
         basicSystem();
         CalculateAverages();
         greenLightText.text = timeToChange.ToString("F2"); 
+        timeElapsedText.text = timeElapsed.ToString("F2");
 
     }
 
     void basicSystem(){
-        if (timeToChange >= saveTime / 1.5f) {
+        if (timeToChange >= saveTime) {
             timeToChange -= Time.deltaTime;
             
         } else if (timeToChange > 0)
@@ -120,8 +122,6 @@ public class TrafficLight : MonoBehaviour
 
             lights[currentTrack].gameObject.layer = 8;
             currentTrack = toChange;
-            Debug.Log("Current: " + currentTrack);
-            Debug.Log("ToChange: " + toChange);
             toChange++;
             if (toChange > 3) toChange = 0;
             lights[currentTrack].gameObject.layer = 9;
@@ -144,7 +144,7 @@ public class TrafficLight : MonoBehaviour
         } else {
             int frontTrack = currentTrack+2;
             if(frontTrack > 3) frontTrack -= 4;
-            Debug.Log("Time out");
+            //Debug.Log("Time out");
             
             timeToChange = saveTime;
 
@@ -186,16 +186,11 @@ public class TrafficLight : MonoBehaviour
     }
     private void HandleTraffic()
     {
-        
         for (int i = 0; i < 4; i++)
         {
             if (i > 3) i = 0;
             if (setToChange && timeToChange <= (saveTime * timeToSet) && ((float)traffic[currentTrack] < (float)traffic[(i + currentTrack) % 4] * dynamicWeight))
             {
-
-                Debug.Log("Changing to track " + (i + 1));
-                Debug.Log("Traffic in current: " + traffic[i]);
-
                 timeToChange *= timeToCut;
 
                 toChange = (i + currentTrack) % 4;
@@ -203,12 +198,6 @@ public class TrafficLight : MonoBehaviour
 
             }
         }
-    }
-
-    private void flip(int red, int green)
-    {
-        lights[red].gameObject.layer = 8;
-        lights[green].gameObject.layer = 9;
     }
 
     private void UpdateTrafficText() {
@@ -290,6 +279,7 @@ public class TrafficLight : MonoBehaviour
     }
 
     public void SetTimeToSet(float time) {
+        Debug.Log(saveTime * time);
         timeToSet = time;
     }
 
@@ -308,4 +298,23 @@ public class TrafficLight : MonoBehaviour
         return avgTrafficPath;
     }
 
+    public float GetTimeElapsed() {
+        return timeElapsed;
+    }
+
+    public float GetPathAverage(int index) {
+        return avgTrafficPath[index];
+    }
+
+    public float GetPathTimeToCross(int index) {
+         return avgTimeToCrossPath[index];
+    }
+
+    public float GetTotalAvg() {
+        return avgTraffic;
+    }
+
+    public float GetTotalTimeToCross() {
+        return avgTimeToCross;
+    }
 }
