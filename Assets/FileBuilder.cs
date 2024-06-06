@@ -89,7 +89,7 @@ public class FileBuilder : MonoBehaviour
         for(int i = 0; i < 4; i++)
         thisString += $"Average cars on Path {i+1}: " + TrafficLight.Instance.GetPathAverage(i).ToString("F4") + '\n';
         for(int i = 0; i < 4; i++)
-        thisString += $"Average time to cross on Path {i+1}" + TrafficLight.Instance.GetPathTimeToCross(i).ToString("F4") + '\n';
+        thisString += $"Average time to cross on Path {i+1}: " + TrafficLight.Instance.GetPathTimeToCross(i).ToString("F4") + '\n';
 
         resultsString = thisString;
         return thisString;

@@ -10362,7 +10362,7 @@ PrefabInstance:
     - target: {fileID: 724738227270326305, guid: 682efe2b8cf32dd42b02dbcc7687b73c,
         type: 3}
       propertyPath: carRate
-      value: 0
+      value: 4
       objectReference: {fileID: 0}
     - target: {fileID: 3005930487900184961, guid: 682efe2b8cf32dd42b02dbcc7687b73c,
         type: 3}
@@ -13011,7 +13011,7 @@ PrefabInstance:
     - target: {fileID: 724738227270326305, guid: 5494b768cf78c504cae53252d91273a8,
         type: 3}
       propertyPath: carRate
-      value: 10
+      value: 4
       objectReference: {fileID: 0}
     - target: {fileID: 724738227270326305, guid: 5494b768cf78c504cae53252d91273a8,
         type: 3}

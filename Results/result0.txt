@@ -1,14 +1,14 @@
-Time elapsed: 74.9141
-Total average cars on intersection: 24.9004
-Total average time to cross: 15.6081
-Average cars on Path 1: 7.7785
-Average cars on Path 2: 5.9803
-Average cars on Path 3: 2.8501
-Average cars on Path 4: 8.2914
-Average time to cross on Path 112.4086
-Average time to cross on Path 211.3351
-Average time to cross on Path 326.1854
-Average time to cross on Path 417.0280
+Time elapsed: 82.5678
+Total average cars on intersection: 26.1357
+Total average time to cross: 16.9835
+Average cars on Path 1: 8.8185
+Average cars on Path 2: 6.7555
+Average cars on Path 3: 2.7090
+Average cars on Path 4: 7.8528
+Average time to cross on Path 1: 18.6729
+Average time to cross on Path 2: 11.5135
+Average time to cross on Path 3: 26.1962
+Average time to cross on Path 4: 16.3180
 
 Initial Dynamic Weight: 0.75
 Initial Light Duration: 15.00
