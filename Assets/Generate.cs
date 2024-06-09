@@ -35,7 +35,8 @@ public class Generate : MonoBehaviour
 
     public void CarRate(float rate){
         carRate = rate;
-        tempRate += Math.Abs(carRate - rate);
+        tempRate += rate - carRate;
+        if(tempRate < 0){tempRate = 0;}
     }
 
     public float GetCarRate(){

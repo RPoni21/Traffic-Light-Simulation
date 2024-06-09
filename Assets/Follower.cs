@@ -1,4 +1,4 @@
-using System.Collections;
+   using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using PathCreation;
@@ -8,7 +8,7 @@ using System.Runtime.InteropServices;
 public class Follower : MonoBehaviour
 {
    [SerializeField] private PathCreator[] pathCreator;
-   [SerializeField] private float speed;
+   private float speed = 15;
    [SerializeField] private bool stop;
    [SerializeField] private float maxDistance;
    [SerializeField] private bool rightSide;
@@ -32,6 +32,7 @@ public class Follower : MonoBehaviour
       saveSpeed = speed;
    }
    void Update() {
+      
     timeAlive += Time.deltaTime;
     distanceTravelled += speed * Time.deltaTime;
 
@@ -46,13 +47,14 @@ public class Follower : MonoBehaviour
          
          if(hit.collider.gameObject.layer == 9 || hit.collider.gameObject.name == "Plane" || hit.collider.gameObject.layer == 7 || hit.collider.gameObject.layer == 14
             || hit.collider.gameObject.layer == 15) {
-            
+
             IncreaseSpeed();
 
             if(hit.collider.gameObject.layer == 14 && !seen) {
-               // Debug.Log("Adding");
                if(hit.collider.GetComponent<TrafficLoad>() != null) {
                trafficLoad = hit.collider.GetComponent<TrafficLoad>();
+               
+
                trafficLoad.Increment();
                seen = true;
                gone = false;
@@ -67,7 +69,6 @@ public class Follower : MonoBehaviour
             }
          }
          else if (hit.collider.gameObject.layer == 6) {
-           // Debug.Log("Car was alive for " + timeAlive);
             Destroy(gameObject);
          }
          else {
@@ -92,7 +93,7 @@ public class Follower : MonoBehaviour
     }
 
     public void IncreaseSpeed() {
-      speed += 0.4f * saveSpeed *Time.deltaTime;
+      speed += 0.4f * saveSpeed *Time.deltaTime*Time.timeScale;
             if (speed > saveSpeed) {
             speed = saveSpeed;
          }

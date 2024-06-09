@@ -1,0 +1,43 @@
+Time elapsed: 110.6496
+Total average cars on intersection: 35.7439
+Total average time to cross: 18.3974
+Average cars on Path 1: 9.1286
+Average cars on Path 2: 8.7792
+Average cars on Path 3: 8.5688
+Average cars on Path 4: 9.2674
+Average time to cross on Path 1: 19.1079
+Average time to cross on Path 2: 17.5840
+Average time to cross on Path 3: 15.9264
+Average time to cross on Path 4: 19.5014
+
+Initial Dynamic Weight: 0.75
+Initial Light Duration: 15.00
+Initial Time Check Coefficient: 0.50
+Initial Initial Time to Cut Coefficient: 0.50
+INITIAL CAR RATES 
+
+CP1L: 4
+CP2R: 4
+CP3L: 4
+CP4R: 4
+CP5L: 4
+CP6R: 4
+CP7L: 4
+CP8R: 4
+
+Final Dynamic Weight: 0.75
+Final Light Duration: 15.00
+Final Time Check Coefficient: 0.50
+Final Initial Time to Cut Coefficient: 0.50
+FINAL CAR RATES 
+
+CP1L: 4
+CP2R: 4
+CP3L: 4
+CP4R: 4
+CP5L: 4
+CP6R: 4
+CP7L: 4
+CP8R: 4
+
+===CHANGES===

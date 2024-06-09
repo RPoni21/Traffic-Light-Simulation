@@ -98,14 +98,14 @@ public class TrafficLight : MonoBehaviour
     void Update()
     {
         timeElapsed += Time.deltaTime;
-        basicSystem();
+        BasicSystem();
         CalculateAverages();
         greenLightText.text = timeToChange.ToString("F2"); 
         timeElapsedText.text = timeElapsed.ToString("F2");
 
     }
 
-    void basicSystem(){
+    void BasicSystem(){
         if (timeToChange >= saveTime) {
             timeToChange -= Time.deltaTime;
             

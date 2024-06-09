@@ -45,7 +45,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 13fb9faca426ebc43ac835a2d4336039, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  carType: {fileID: 8920558415956170366, guid: 578f64ca179eb9a48b8918d241cee2ef, type: 3}
+  carRate: 4
+  carType: {fileID: 8920558415956170366, guid: 155bb4d39a107d04abb03d4eba86906e, type: 3}
 --- !u!1 &9156374315013283111
 GameObject:
   m_ObjectHideFlags: 0

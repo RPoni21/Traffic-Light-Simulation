@@ -1,0 +1,45 @@
+Time elapsed: 719.5762
+Total average cars on intersection: 31.6682
+Total average time to cross: 16.5143
+Average cars on Path 1: 7.8378
+Average cars on Path 2: 8.6757
+Average cars on Path 3: 6.7709
+Average cars on Path 4: 8.3837
+Average time to cross on Path 1: 16.0431
+Average time to cross on Path 2: 16.2776
+Average time to cross on Path 3: 17.2762
+Average time to cross on Path 4: 16.4578
+
+Initial Dynamic Weight: 0.75
+Initial Light Duration: 15.00
+Initial Time Check Coefficient: 0.50
+Initial Initial Time to Cut Coefficient: 0.50
+INITIAL CAR RATES 
+
+CP1L: 4
+CP2R: 4
+CP3L: 4
+CP4R: 4
+CP5L: 4
+CP6R: 4
+CP7L: 4
+CP8R: 4
+
+Final Dynamic Weight: 0.75
+Final Light Duration: 15.00
+Final Time Check Coefficient: 0.50
+Final Initial Time to Cut Coefficient: 0.50
+FINAL CAR RATES 
+
+CP1L: 4
+CP2R: 4
+CP3L: 4
+CP4R: 4
+CP5L: 0
+CP6R: 0
+CP7L: 4
+CP8R: 4
+
+===CHANGES===
+Changed spawn rate of GenP3L from 4 to 0 at time 572.63
+Changed spawn rate of GenP3R from 4 to 0 at time 572.63
