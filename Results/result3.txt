@@ -1,0 +1,45 @@
+Time elapsed: 100.2606
+Total average cars on intersection: 39.5535
+Total average time to cross: 15.4810
+Average cars on Path 1: 6.4442
+Average cars on Path 2: 19.5923
+Average cars on Path 3: 6.5981
+Average cars on Path 4: 6.9188
+Average time to cross on Path 1: 13.1169
+Average time to cross on Path 2: 16.9614
+Average time to cross on Path 3: 13.8558
+Average time to cross on Path 4: 14.3873
+
+Initial Dynamic Weight: 0.75
+Initial Light Duration: 15.00
+Initial Time Check Coefficient: 0.50
+Initial Initial Time to Cut Coefficient: 0.50
+INITIAL CAR RATES 
+
+CP1L: 4
+CP2R: 4
+CP3L: 4
+CP4R: 4
+CP5L: 4
+CP6R: 4
+CP7L: 4
+CP8R: 4
+
+Final Dynamic Weight: 0.75
+Final Light Duration: 5.00
+Final Time Check Coefficient: 0.50
+Final Initial Time to Cut Coefficient: 0.50
+FINAL CAR RATES 
+
+CP1L: 4
+CP2R: 4
+CP3L: 0.5
+CP4R: 4
+CP5L: 4
+CP6R: 4
+CP7L: 4
+CP8R: 4
+
+===CHANGES===
+Changed spawn rate of GenP2L from 4 to 0.5 at time 20.60
+Changed traffic light time from 0.50 to 5.00 at time 73.21
